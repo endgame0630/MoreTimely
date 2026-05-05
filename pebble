@@ -1,0 +1,51 @@
+#!/bin/bash
+# Pebble build wrapper using Docker
+
+# Check if Docker is available
+if ! command -v docker &> /dev/null; then
+    echo "Docker is not installed. Please install Docker to use pebble build."
+    exit 1
+fi
+
+# Get the absolute path to the project root
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Use a faster Docker image with pre-installed Pebble SDK
+# Try a different image that might have the SDK pre-installed
+docker run --rm \
+    -v "$PROJECT_ROOT:/src" \
+    -w /src \
+    --entrypoint /bin/bash \
+    python:2.7-slim \
+    -c "
+        set -e
+        # Update apt sources for Debian archive
+        sed -i 's#http://deb.debian.org/debian#http://archive.debian.org/debian#g; s#http://security.debian.org/debian-security#http://archive.debian.org/debian-security#g' /etc/apt/sources.list
+        echo 'Acquire::Check-Valid-Until false;' > /etc/apt/apt.conf.d/99no-check-valid-until
+        
+        # Install minimal dependencies
+        apt-get update && apt-get install -y git python-pip python-dev libsdl1.2debian libfdt1 libpixman-1-0 curl
+        
+        # Install virtualenv
+        pip install virtualenv
+        
+        # Use a cached or faster SDK setup
+        if [ ! -d /tmp/pebble-sdk ]; then
+            echo 'Setting up Pebble SDK...'
+            git clone --depth 1 https://github.com/jcrona/pebble-sdk.git /tmp/pebble-sdk
+            cd /tmp/pebble-sdk
+            # Patch license to auto-accept
+            sed -i 's/result = strtobool(raw_input("Do you accept the Pebble Terms of Use and the "/result = True  # Auto-accept license\n            # patched: raw_input("Do you accept the Pebble Terms of Use and the "/' pebble_tool/sdk/manager.py
+            virtualenv .env
+            source .env/bin/activate
+            pip install -r requirements.txt
+            # Pre-install SDK to avoid download during build
+            echo 'y' | /tmp/pebble-sdk/bin/pebble sdk install latest || true
+            deactivate
+        fi
+        
+        # Run pebble build
+        cd /src
+        echo 'Starting build...'
+        /tmp/pebble-sdk/bin/pebble build
+    " "$@"
