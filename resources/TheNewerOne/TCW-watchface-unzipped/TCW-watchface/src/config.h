@@ -1,0 +1,50 @@
+#ifndef futura_weather_redux_config_h
+#define futura_weather_redux_config_h
+
+enum AppMessageKey {
+	PK_WEATHER = 1016,
+	REQUEST_WEATHER_COUNT = 17,
+	REQUEST_WEATHER_MSG_KEY = 21,
+	SET_WEATHER_MSG_KEY = 22,
+    WEATHER_TEMPERATURE_MSG_KEY = 23,
+    WEATHER_CONDITIONS_MSG_KEY = 24,
+	SET_PREFERENCES_MSG_KEY = 25,
+	TEMP_FORMAT_MSG_KEY = 26,
+	WEATHER_UPDATE_FREQ_MSG_KEY = 27,
+	STATUSBAR_MSG_KEY = 28,
+	WEATHER_NAME_MSG_KEY = 29,
+	WEATHER_COUNTRY_MSG_KEY =20,
+	REQUEST_WEATHER_LOCATION_MSG_KEY = 19,
+	REQUEST_WEATHER_GET_MSG_KEY = 18
+};
+
+enum PersistKey {
+	PREF_TEMP_FORMAT_PERSIST_KEY = 1,
+	PREF_WEATHER_UPDATE_FREQ_PERSIST_KEY = 2,
+	PREF_STATUSBAR_PERSIST_KEY = 3,
+	WEATHER_CACHE_LAST_UPDATE_PERSIST_KEY = 4,
+	WEATHER_CACHE_TEMPERATURE_PERSIST_KEY = 5,
+	WEATHER_CACHE_CONDITIONS_PERSIST_KEY = 6,
+	WEATHER_CACHE_NAME_PERSIST_KEY = 7,
+	WEATHER_CACHE_COUNTRY_PERSIST_KEY = 8
+};
+
+typedef enum {
+	TEMP_FORMAT_CELCIUS = 1,
+	TEMP_FORMAT_FAHRENHEIT = 0
+} TempFormat;
+
+/*typedef struct Send_val {
+	uint8_t array[10];
+	union{
+	int status;
+	char version;
+	char batprc;
+	bool batcharg;
+	bool batplug;
+	bool batreqw;
+	char batshow;
+	};
+} Send_val;*/
+
+#endif
