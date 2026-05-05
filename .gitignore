@@ -3,3 +3,7 @@ build
 .lock-waf*
 pebble-screenshot*
 .*.swp
+
+# Ignore local Pebble virtualenvs
+.pebble-env/
+.pebble-env2/
